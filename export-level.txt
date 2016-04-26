@@ -1,0 +1,35 @@
+/*
+ To export one level
+ Call this with the url of the level as the argument
+ E.g., node http://www.memrise.com/course/99/unknownlanguagecourse/2
+
+ This is looking for this structure of embedded div tags to hold the data:
+
+div class="thing text-text"
+ div class="col_a col text"
+  div class="text"
+ div class="col_b col text"
+  div class="text"
+*/
+
+var jsdom = require('jsdom').jsdom;
+
+var url = process.argv[2];
+console.log("url: " + url);
+
+jsdom.env(
+  url,
+  ["http://code.jquery.com/jquery.js"],
+  function (err, window) {
+    processThings(window);
+  }
+);
+
+function processThings(window) {
+  var $ = window.$;
+  $(".thing").each(function(index, value) {
+    var cola = $(this).find('.col_a').find('.text').first().html();
+    var colb = $(this).find('.col_b').find('.text').first().html();
+    console.log(cola + "|" + colb);
+  });
+}
